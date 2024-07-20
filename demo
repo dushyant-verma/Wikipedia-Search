@@ -1,0 +1,53 @@
+<script>
+
+
+document.getElementById('searchButton').addEventListener('click', function() {
+    let searchQuery = document.getElementById('searchInput').value;
+    searchWikipedia(searchQuery);
+});
+
+document.getElementById('searchInput').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+        let searchQuery = document.getElementById('searchInput').value;
+        searchWikipedia(searchQuery);
+    }
+});
+
+function searchWikipedia(query) {
+    const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${query}&format=json&origin=*`;
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            displayResults(data.query.search);
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function displayResults(results) {
+    let resultsContainer = document.getElementById('results');
+    resultsContainer.innerHTML = '';
+
+    results.forEach(result => {
+        let resultItem = document.createElement('div');
+        resultItem.classList.add('result-item');
+        
+        let resultTitle = document.createElement('h3');
+        let resultLink = document.createElement('a');
+        resultLink.href = `https://en.wikipedia.org/wiki/${result.title}`;
+        resultLink.target = '_blank';
+        resultLink.textContent = result.title;
+        
+        let resultSnippet = document.createElement('p');
+        resultSnippet.innerHTML = result.snippet;
+
+        resultTitle.appendChild(resultLink);
+        resultItem.appendChild(resultTitle);
+        resultItem.appendChild(resultSnippet);
+        resultsContainer.appendChild(resultItem);
+    });
+}
+
+
+
+</script>
